@@ -295,7 +295,9 @@ checkMatShape shape = do
   where
     checkDim :: Int32 -> m ()
     checkDim dim =
-        when (dim < 1) $
+        -- The size of a dimension (shape array entry) can be 0
+        -- if the matrix is empty, e.g. default-constructing `Mat(0, 3, CV_8UC1)`.
+        when (dim < 0) $
           throwError $ CvException $ "invalid dimension size: " ++ show dim
 
 checkMatChannels :: (Applicative m, MonadError CvException m) => Int32 -> m ()
