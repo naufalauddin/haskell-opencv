@@ -130,6 +130,9 @@ main = defaultMain $ testGroup "opencv"
             [ HU.testCase "M23 eye" $ testMatToM23 eye23_8u_1c (eye_m23 :: M23 Word8)
             , HU.testCase "M33 eye" $ testMatToM33 eye33_8u_1c (eye_m33 :: M33 Word8)
             ]
+          , testGroup "empty matrices"
+            [ HU.testCase "M03 eye" $ assertEqual "0-rows mat should become empty list" [] (VS.toList $ matToVec eye03_8u_1c)
+            ]
           , testGroup "mat <-> vector conversions"
             [ testGroup "unsafeWithMatAsVec"
               [ HU.testCase "eye_m33 Word8"  $ testUnsafeWithMatAsVec (eye_m33 :: M33 Word8)
@@ -720,10 +723,12 @@ testTLSMemLeak numThreads = do
 
 --------------------------------------------------------------------------------
 
+eye03_8u_1c :: Mat (ShapeT [0, 3]) ('S 1) ('S Word8) -- also test 0-row `Mat`
 eye23_8u_1c :: Mat (ShapeT [2, 3]) ('S 1) ('S Word8)
 eye33_8u_1c :: Mat (ShapeT [3, 3]) ('S 1) ('S Word8)
 eye22_8u_3c :: Mat (ShapeT [2, 2]) ('S 3) ('S Word8)
 
+eye03_8u_1c = exceptError $ eyeMat (Proxy @0) (Proxy @3) (Proxy @1) (Proxy @Word8)
 eye23_8u_1c = exceptError $ eyeMat (Proxy @2) (Proxy @3) (Proxy @1) (Proxy @Word8)
 eye33_8u_1c = exceptError $ eyeMat (Proxy @3) (Proxy @3) (Proxy @1) (Proxy @Word8)
 eye22_8u_3c = exceptError $ eyeMat (Proxy @2) (Proxy @2) (Proxy @3) (Proxy @Word8)
